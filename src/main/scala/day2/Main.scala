@@ -40,4 +40,27 @@ object Main extends App {
   println(checksum(star1))
 
 
+
+  def findDivision(lineNumbers: Seq[Int]): Int = {
+    val sorted = lineNumbers.sorted
+    for (i <- 1 until sorted.length) {
+      val num_i = sorted(i)
+      for (j <- 0 until i) {
+        val num_j = sorted(j)
+        if (num_i % num_j == 0) return num_i / num_j
+      }
+    }
+    -1
+  }
+
+  //example
+  val example2 = """5 9 2 8
+9 4 7 3
+3 8 6 5"""
+
+  example2.lines.map(parseInts).map(findDivision).foreach(println)
+
+
+  // star 2 input == star 1 input
+  println(star1.lines.map(parseInts).map(findDivision).sum)
 }
