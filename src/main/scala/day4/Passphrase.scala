@@ -529,4 +529,23 @@ jwfm ptjwrbl hhuv uolz adyweh qpj wxyogp igvnojq jmfw pqs fsnirby"""
 
     println(full_list(star1).count(isValidPassphrase))
 
+
+  // star 2
+
+  def isNewValidPassphrase(phrase: String) = {
+    val words = phrase.split("\\s+").map(_.sorted)
+    words.length == words.distinct.length
+  }
+
+
+  // examples
+
+  println(isNewValidPassphrase("abcde fghij"))
+  println(isNewValidPassphrase("abcde xyz ecdab"))
+  println(isNewValidPassphrase("a ab abc abd abf abj"))
+  println(isNewValidPassphrase("iiii oiii ooii oooi oooo"))
+  println(isNewValidPassphrase("oiii ioii iioi iiio"))
+
+  println(full_list(star1).count(isNewValidPassphrase))
+
 }
