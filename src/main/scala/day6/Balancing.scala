@@ -17,12 +17,13 @@ object Balancing extends App {
   }
 
   def countSteps(mem: Array[Int]): Unit = {
-    var seen = mutable.Set[Array[Int]]()
+    var seen = List[Array[Int]]()
     while (!seen.exists(_.sameElements(mem))) {
-      seen.add(Array[Int](mem: _*))
+      seen :+= Array[Int](mem: _*)
       mem.step()
     }
     println(seen.size)
+    println(seen.size - seen.indexWhere(_.sameElements(mem)))
   }
 
   val example = "0 2 7 0"
