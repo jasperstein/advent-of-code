@@ -2,6 +2,8 @@ package day8
 
 object Registers extends App {
 
+  var highest: Int = 0
+
   case class Instruction(regToModify: String, delta: Int, regToCheck: String, operator: (Int, Int) => Boolean, compValue: Int)
 
   def parseLine(line:String): Instruction = {
@@ -27,13 +29,15 @@ object Registers extends App {
       if (!needToModify) registers
       else {
         val newValue = registers.getOrElse(instr.regToModify, 0) + instr.delta
+        if (newValue > highest) highest = newValue
         registers + (instr.regToModify -> newValue)
       }
     })
   }
 
   println(process(Input.example))
+  highest = 0
   println(process(Input.star1))
   println(process(Input.star1).values.max)
-
+  println(highest)
 }
