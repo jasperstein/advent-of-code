@@ -24,4 +24,31 @@ object Hash extends App {
   println(process(List(3, 4, 1, 5), 5))
   // for real
   println(process(List(212,254,178,237,2,0,1,54,167,92,117,125,255,61,159,164), 256))
+
+  // star2
+  val inputRaw = "212,254,178,237,2,0,1,54,167,92,117,125,255,61,159,164"
+
+  def round(inputs: List[Int], state: State): State = inputs.foldLeft(state)(transition)
+
+  def rounds(n: Int, input: List[Int], state: State) = Range(0,n).foldLeft(state)((st, i) => round(input, st))
+
+  def sparse(inputRaw: String): State = {
+    val initialState = State(0, 0, Range(0, 256).toList)
+    val input = inputRaw.map(_ + 0).toList ++ List(17, 31, 73, 47, 23)
+    rounds(64, input, initialState)
+  }
+
+  def hashBlock(input: List[Int]): Int = input.foldLeft(0)((b1, b2) => b1 ^ b2)
+
+  def dense(hash: List[Int]): List[Int] = hash.grouped(16).map(hashBlock).toList
+
+  def hash(input: String): String = dense(sparse(input).hash).map(d => ("0" + d.toHexString).takeRight(2)).mkString("")
+
+  // examples
+  println(hash(""))
+  println(hash("AoC 2017"))
+  println(hash("1,2,3"))
+  println(hash("1,2,4"))
+  // for real
+  println(hash(inputRaw))
 }
