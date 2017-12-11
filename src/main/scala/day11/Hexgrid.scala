@@ -30,9 +30,28 @@ object Hexgrid extends App {
       n -= min
       ne += min
       nw += min
+    } else {
+      if (n<0) {
+        n *= -1
+        ne *= -1
+        nw *= -1
+      }
+      if (nw < 0) {
+        val min = Math.min(n, -nw)
+        n -= min
+        nw += min
+        ne += min
+      }
+      if (ne < 0) {
+        val min = Math.min(n, -ne)
+        n -= min
+        ne += min
+        nw += min
+      }
     }
+
     if (n * (ne+nw) < 0)
-      Math.abs(Math.max(n, ne + nw))
+      Math.max(Math.abs(n), Math.abs(ne + nw))
     else
       Math.abs(n + ne + nw)
   }
@@ -45,5 +64,14 @@ object Hexgrid extends App {
   println(totalSteps(countRawSteps(input2Directions(example4))))
 
   println(totalSteps(countRawSteps(input2Directions(star1))))
+
+  println(input2Directions(example1).inits.map(steps => totalSteps(countRawSteps(steps))).mkString("\t"))
+  println(input2Directions(example2).inits.map(steps => totalSteps(countRawSteps(steps))).mkString("\t"))
+  println(input2Directions(example3).inits.map(steps => totalSteps(countRawSteps(steps))).mkString("\t"))
+  println(input2Directions(example4).inits.map(steps => totalSteps(countRawSteps(steps))).mkString("\t"))
+  println(input2Directions(star1).inits.map(steps => totalSteps(countRawSteps(steps))).mkString("\t"))
+  println(input2Directions(star1).inits.map(steps => totalSteps(countRawSteps(steps))).max)
+  println(input2Directions("ne,se,n,n").inits.map(steps => totalSteps(countRawSteps(steps))).mkString("\t"))
+//  println(input2Directions().inits.map(steps => totalSteps(countRawSteps(steps))).max)
 
 }
