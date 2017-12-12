@@ -31,4 +31,5 @@ object Pipes extends App {
   val realRoots = parsedInput.indices.map(root(_, group(parsedInput)))
   println(realRoots.count(_ == realRoots(0)))
 
+  println(realRoots.distinct.size)
 }
