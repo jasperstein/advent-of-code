@@ -11,23 +11,26 @@ object Firewall extends App {
 
   println(parseInput(Input.example))
 
-  def severity(scanners: Map[Int, Int], step: Int): Int = {
-    if (!scanners.contains(step)) {
-      println(s"no entry for $step")
-      0
-    } else if (step % (2*scanners(step)-2) != 0) {
-      println(s"Step $step: depth ${scanners(step)}, location ${step % (2*scanners(step) - 2)}")
-      0
-    }
-    else {
-      println(s"Hit! $step, depth ${scanners(step)}")
-      step * scanners(step)
-    }
+  def severity(scanners: Map[Int, Int], depth: Int, delay: Int = 0): Int = {
+    if (!scanners.contains(depth) || (depth + delay) % (2*scanners(depth)-2) != 0) 0
+    else depth * scanners(depth)
   }
 
-  println(Range(0,7).toList.map(severity(parseInput(Input.example), _)))
+  private val exampleInput: Map[Int, Int] = parseInput(Input.example)
+  println(Range(0,7).toList.map(severity(exampleInput, _)))
 
   val input = parseInput(Input.star1)
   println(Range(0,input.keys.max + 1).toList.map(severity(input, _)))
-  println(Range(0,input.keys.max + 1).toList.map(severity(input, _)).sum)
+  println(Range(0,input.keys.max + 1).map(severity(input, _)).sum)
+
+  def delaySeverity(delay: Int) = Range(0, input.keys.max + 1).map(severity(input, _, delay)).sum
+
+  var found = false
+  var delay = -1
+  while (!found) {
+    delay = delay + 1
+    val score = delaySeverity(delay)
+    if (score == 0 && (delay % (2*input(0) - 2) != 0)) found = true
+  }
+  println(delay)
 }
