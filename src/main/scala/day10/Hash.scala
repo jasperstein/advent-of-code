@@ -1,6 +1,23 @@
 package day10
 
-object Hash extends App {
+object HashApp extends App {
+  import Hash._
+
+  // example
+  println(process(List(3, 4, 1, 5), 5))
+  // for real
+  println(process(List(212,254,178,237,2,0,1,54,167,92,117,125,255,61,159,164), 256))
+
+  // examples
+  println(hash(""))
+  println(hash("AoC 2017"))
+  println(hash("1,2,3"))
+  println(hash("1,2,4"))
+  // for real
+  println(hash(inputRaw))
+}
+
+object Hash {
   case class State(skipSize: Int, currPos: Int, hash: List[Int])
 
   def transition(state: State, input: Int): State = {
@@ -19,11 +36,6 @@ object Hash extends App {
     val result: State = inputs.foldLeft(State(0, 0, initial))(transition)
     result.hash.head * result.hash(1)
   }
-
-  // example
-  println(process(List(3, 4, 1, 5), 5))
-  // for real
-  println(process(List(212,254,178,237,2,0,1,54,167,92,117,125,255,61,159,164), 256))
 
   // star2
   val inputRaw = "212,254,178,237,2,0,1,54,167,92,117,125,255,61,159,164"
@@ -44,11 +56,4 @@ object Hash extends App {
 
   def hash(input: String): String = dense(sparse(input).hash).map(d => ("0" + d.toHexString).takeRight(2)).mkString("")
 
-  // examples
-  println(hash(""))
-  println(hash("AoC 2017"))
-  println(hash("1,2,3"))
-  println(hash("1,2,4"))
-  // for real
-  println(hash(inputRaw))
 }
