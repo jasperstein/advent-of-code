@@ -15,4 +15,12 @@ object Spinlock extends App {
     buffer(pos) = i
   }
   println(buffer.toList)
+
+  pos = 0
+  var answer = 0
+  for (i <- 1 to 50000000) {
+    pos = ((pos + star1) % i) + 1
+    if (pos == 1) answer = i
+  }
+  println(answer)
 }
