@@ -15,5 +15,14 @@ object Dance extends App {
   println(parseInput("s1,x3/4,pe/b").foldLeft(List('a','b','c','d','e')){ case ((lineup, move)) => move.dance(lineup) }.mkString(""))
 
   val initLineup = Range(0, 16).map(i => ('a' + i).asInstanceOf[Char]).toList
-  println(parseInput(Input.star1).foldLeft(initLineup){ case ((lineup, move)) => move.dance(lineup) }.mkString(""))
+  private val moves: List[Move] = parseInput(Input.star1)
+
+  private def dance(lineup: List[Char]) = {
+    moves.foldLeft(lineup) { case ((currentlineup, move)) => move.dance(currentlineup) }
+  }
+
+  println(dance(initLineup).mkString(""))
+
+  Range(0, 100).foldLeft(initLineup)({case ((lineup, i)) => println(lineup.mkString("") + i); dance(lineup)})
+  println(1000000000 % 42)
 }
