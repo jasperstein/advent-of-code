@@ -23,6 +23,22 @@ object Duet extends App {
   var state = State(0, initRegs, 0)
   while (instructions.indices.contains(state.pc)) {
     state = instructions(state.pc).apply(state)
-    println(state)
+//    println(state)
   }
+
+  var duet = DuetState(State2(0, initRegs, 0, List()), State2(0, initRegs.updated('p', 1), 0, List()))
+
+  def done(d: DuetState): Boolean = noProgress(d.s1) && noProgress(d.s2)
+
+  def noProgress(state: State2): Boolean = !instructions.indices.contains(state.pc) || (instructions(state.pc).isInstanceOf[Rcv] && state.queue.isEmpty)
+
+  while (!done(duet)) {
+    while (!noProgress(duet.s1)) {
+      duet = instructions(duet.s1.pc).apply1(duet)
+    }
+    while (!noProgress(duet.s2)) {
+      duet = instructions(duet.s2.pc).apply2(duet)
+    }
+  }
+  println(duet.s2.sent)
 }
