@@ -49,4 +49,9 @@ object Grid extends App {
   private val result: String = transform(transform(transform(transform(transform(iteration0.replace("/", "\n"))))))
   println(result)
   println(result.count(_ == '#'))
+
+  private val result2: String = transform(transform(transform(transform(transform(transform(transform(transform(transform(transform(transform(transform(transform(result.replace("/", "\n"))))))))))))))
+  println(result2.count(_ == '#'))
+
+
 }
