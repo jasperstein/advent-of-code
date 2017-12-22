@@ -26,18 +26,27 @@ object Virus extends App {
   }
 
   def run(input: String, iterations: Int): Int = {
+    var weakened = Set[Position]()
+    var flagged = Set[Position]()
+    var infected = parsePositions(input)
     var pos = Position(0, 0)
     var dir: Direction = Up
-    var infected = parsePositions(input)
     var infCount = 0
     for (i <- Range(0, iterations)) {
-      if (infected.contains(pos)) {
+      if (weakened.contains(pos)) {
+        weakened -= pos
+        infected += pos
+        infCount = infCount + 1
+      } else if (infected.contains(pos)) {
         dir = dir.turnRight()
         infected = infected - pos
+        flagged = flagged + pos
+      } else if (flagged.contains(pos)) {
+        dir = dir.turnLeft().turnLeft()
+        flagged -= pos
       } else {
+        weakened += pos
         dir = dir.turnLeft()
-        infected = infected + pos
-        infCount = infCount + 1
       }
       pos = pos.go(dir)
 //      println(s"$pos $dir")
@@ -45,7 +54,7 @@ object Virus extends App {
     infCount
   }
 
-  println(run(Input.example, 10000))
-  println(run(Input.star1, 10000))
+  println(run(Input.example, 100))
+  println(run(Input.star1, 10000000))
 
 }
