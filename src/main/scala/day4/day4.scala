@@ -60,5 +60,21 @@ object day4 extends App {
   println(mostMinutes)
 
   println(mostSleep._1 * mostMinutes._1)
+
+
+
+  val sleepByGuard = mutable.Map[(Int, Int), Int]().withDefault(_ => 0)
+
+  sleepMinutes.foreach({ case (guard, (_, sleeps)) =>
+    sleeps.forEach(new Consumer[(Int, Int)] {
+      override def accept(t: (Int, Int)): Unit = for (i <- t._1 until t._2) {
+        sleepByGuard(guard, i) += 1
+      }
+    })
+  })
+
+  println(sleepByGuard.toList.sortBy(_._2).last)
+
+
 }
 
