@@ -15,7 +15,7 @@ object day7 extends App {
 
   println(prios)
 
-//  var itemPrios = Map[Char, Int]().withDefaultValue(-1)
+  //  var itemPrios = Map[Char, Int]().withDefaultValue(-1)
 
   def findPrio(c: Char, currPrios: List[PrioSpec]): Int = {
     var result = 0
@@ -24,7 +24,7 @@ object day7 extends App {
         result = Math.max(result, findPrio(spec.c1, currPrios) + 1)
       }
     }
-//    itemPrios = itemPrios + (c -> result)
+    //    itemPrios = itemPrios + (c -> result)
     result
   }
 
@@ -42,11 +42,61 @@ object day7 extends App {
     val firstChar = findFirst(letters, thePrios).get
     letters = letters.filterNot(_.equals(firstChar))
     stack.push(firstChar)
+    if (thePrios.size == 1) {
+      stack.push(thePrios.head.c2)
+    }
     thePrios = thePrios.filterNot(spec => spec.c1 == firstChar)
-    println(firstChar + thePrios.size)
-    println(letters.toList)
+    //    println(firstChar + thePrios.size)
+    //    println(letters.toList)
   }
 
   println(stack)
-//JNOIKSYABEQRUVWXGTZFDMHLPC
+
+  case class Busy(c: Char, timeLeft: Int)
+
+  thePrios = prios
+  var unstartedJobs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray
+  var workers = List(Busy('x', 0), Busy('x', 0), Busy('x', 0), Busy('x', 0), Busy('x', 0))
+
+  def jobTime(c: Char) = c.toInt - 4
+
+  println(jobTime('A'))
+
+  var time = 0
+
+  def tick(): Unit = {
+    time = time + 1
+    workers = workers.map(w => Busy(w.c, Math.max(w.timeLeft - 1, 0)))
+  }
+
+  def assignJobs(): Boolean = {
+    if (workers.count(_.timeLeft <= 0) == 0) false else {
+      findFirst(unstartedJobs, thePrios) match {
+        case None => false
+        case Some(job) =>
+          unstartedJobs = unstartedJobs.filterNot(_ == job)
+          workers = workers.tail :+ Busy(job, jobTime(job))
+          workers.sortBy(_.timeLeft)
+          true
+      }
+    }
+  }
+
+  def removeDoneJobPrios(): Unit = {
+    workers.foreach { w =>
+      if (w.timeLeft == 0) {
+        thePrios = thePrios.filterNot(spec => spec.c1 == w.c)
+      }
+    }
+  }
+
+  while (unstartedJobs.nonEmpty) {
+    removeDoneJobPrios()
+    if (!assignJobs()) {
+      println(time)
+      println(workers)
+      println(unstartedJobs.toList)
+      tick()
+    }
+  }
 }
