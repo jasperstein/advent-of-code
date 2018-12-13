@@ -8,33 +8,69 @@ object day12 extends App {
 
   println(rules)
 
-  case class Generation(i: Int) extends AnyVal
-  case class Position(i: Int) extends AnyVal
+//  case class Generation(i: Int) extends AnyVal
+  case class Position(i: Long) extends AnyVal
 
-  val pots = mutable.Map[(Generation, Position), Char]().withDefaultValue('.')
+  var pots = mutable.Map[Position, Char]().withDefaultValue('.')
 
   val zipped: immutable.Seq[(Char, Int)] = day12Input.initial.zipWithIndex
   for (entry <- zipped) {
-    pots((Generation(0), Position(entry._2))) = entry._1
+    pots(Position(entry._2)) = entry._1
   }
 
 //  println(pots.toList.sortBy(_._1._2.i))
   // #.#.#....##...##...##...#.##.#.###...#.##...#....#.#...#.##.........#.#...#..##.#.....#..#.###
 
-  for (i <- 1 to 20) {
-    for (p <- -(2*i) to day12Input.initial.length + (2*i)) {
-      val prev = List(
-        pots((Generation(i-1), Position(p-2))),
-        pots((Generation(i-1), Position(p-1))),
-        pots((Generation(i-1), Position(p))),
-        pots((Generation(i-1), Position(p+1))),
-        pots((Generation(i-1), Position(p+2)))
-      ).mkString
-      val nextChar = if (rules.contains(prev)) '#' else '.'
-      pots((Generation(i), Position(p))) = nextChar
-    }
+  val seen = new java.util.Stack[String]()
+
+  def toStateString(nextPots: mutable.Map[Position, Char], min: Long, max: Long): String = {
+    (min.toInt to max.toInt).map(i => nextPots(Position(i))).mkString
   }
 
-  println(pots.toList.filter(p => p._1._1.i == 20 && p._2 == '#').map(p => p._1._2.i).sum)
+  def detectCycles(nextPots: mutable.Map[Position, Char], min: Long, max: Long): Int = {
+    val state = toStateString(nextPots, min, max)
+    val idx = seen.indexOf(state)
+    seen.push(state)
+    idx
+  }
 
+  var prevMinPos = 0L
+  var prevMaxPos = day12Input.initial.length.toLong
+  var i: Long = 1
+  while (i <= 200L) {
+//    if (i % 1000000000 == 0) { println(i) }
+    var minPos = Long.MaxValue
+    var maxPos = Long.MinValue
+    var nextPots = mutable.Map[Position, Char]().withDefaultValue('.')
+    for (p <- prevMinPos - 2 to prevMaxPos + 2) {
+      val prev = List(
+        pots(Position(p-2)),
+        pots(Position(p-1)),
+        pots(Position(p)),
+        pots(Position(p+1)),
+        pots(Position(p+2))
+      ).mkString
+      if (rules.contains(prev)) {
+        nextPots(Position(p)) = '#'
+        if (p < minPos) minPos = p
+        if (p > maxPos) maxPos = p
+      }
+    }
+    val cycle = detectCycles(nextPots, minPos, maxPos)
+//    if (cycle > -1) {
+//      println(i, cycle)
+//    }
+    prevMaxPos = maxPos
+    prevMinPos = minPos
+    pots = nextPots
+    i = i+1
+    println(toStateString(nextPots, minPos, maxPos))
+  }
+
+  println(pots.toList.filter(p => p._2 == '#').map(p => p._1.i).sum)
+  println(pots.toList.filter(p => p._2 == '#').sortBy(_._1.i))
+// List((Position(111),#), (Position(116),#), (Position(122),#), (Position(129),#), (Position(134),#), (Position(139),#), (Position(145),#), (Position(153),#), (Position(161),#), (Position(169),#), (Position(174),#), (Position(179),#), (Position(184),#), (Position(192),#), (Position(200),#), (Position(209),#), (Position(219),#), (Position(224),#), (Position(230),#), (Position(238),#))
+//  200 -> 4508
+//  201 -> 4528
+  println(508 + 20*50000000000L)
 }
