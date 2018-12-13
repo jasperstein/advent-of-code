@@ -110,10 +110,17 @@ object day13 extends App {
   class CrashException(val c: Cart) extends Exception
 
   def tick(): Unit = {
-    carts.sortBy(c => 200 * c.position.y + c.position.x)
+    carts = carts.sortBy(c => 200 * c.position.y + c.position.x)
     for (cart <- carts) {
+//      if (ticks > 5793 && !cart.collided) print(cart)
       cart.move()
-      if (carts.count(c => c.position == cart.position) > 1) throw new CrashException(cart)
+//      if (ticks > 5793 && !cart.collided) println(cart)
+      if (!cart.collided && carts.count(c => c.position == cart.position && !c.collided) > 1) {
+        carts.filter(_.position == cart.position).foreach(c => {
+          println(c)
+          c.collided = true
+        })
+      }
     }
   }
 
@@ -125,11 +132,11 @@ object day13 extends App {
   }
 
   def printBoard(): Unit = {
-    for (y <- 0 to 10) {
+    for (y <- input.indices) {
       for (x <- 0 until input(y).length) {
         carts.find(c => c.position == Coord(x, y)) match {
           case None => print(input(y).charAt(x))
-          case Some(c) => print(c.direction)
+          case Some(c) => print(if (c.collided) '@' else c.direction)
         }
       }
       println()
@@ -137,17 +144,15 @@ object day13 extends App {
   }
 
   var ticks = 0
-  var doTick = Try[Unit](())
-  while (doTick.isSuccess) {
-    printBoard()
-    doTick = Try(tick())
+  println(carts.count(!_.collided))
+
+  while (carts.count(!_.collided) > 1) {
+//    println(carts.count(!_.collided))
+    if (List(5795, 5796).contains(ticks)) println(carts.sortBy(c => 200 * c.position.y + c.position.x))
+    tick()
     ticks = ticks + 1
+    if (List(5794, 5795, 5796).contains(ticks)) printBoard()
     println(ticks)
   }
-  try {
-    doTick.get
-  }
-  catch {
-    case e: CrashException => println(e.c)
-  }
+  println(carts)
 }
