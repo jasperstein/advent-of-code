@@ -5,10 +5,9 @@ import scala.collection.mutable
 object day14 extends App {
 
   val input = 760221
+//  val input = 594142
 
   var elves= mutable.Map[Int, Node]()
-//  elves(0) = 0
-//  elves(1) = 1
 
   class Node(val score: Int, var next: Node)
 
@@ -17,10 +16,6 @@ object day14 extends App {
 
   elves(0) = recipeScores
   elves(1) = recipeScores.next
-
-//  var recipeScores = mutable.Queue[Int]()
-//  recipeScores.enqueue(3)
-//  recipeScores.enqueue(7)
 
   def skip(node: Node, n: Int): Node = if (n == 0) node else {
     val next = node.next
@@ -33,39 +28,35 @@ object day14 extends App {
       lastRecipe.next = next
       lastRecipe = next
     })
-    //    println(newScores)
-    //    recipeScores.enqueue(newScores: _*)
-    //    println(recipeScores)
-    //    println(Math.floorMod(elves(0) + 1 + recipeScores(elves(0)), recipeScores.length))
-    //    println(Math.floorMod(elves(1) + 1 + recipeScores(elves(1)), recipeScores.length))
-    //    println(recipeScores.length)
     elves(0) = skip(elves(0), 1 + elves(0).score)
     elves(1) = skip(elves(1), 1 + elves(1).score)
   }
 
-  var i = 0
-  while (i < input + 10) {
+  var candidate: Node = recipeScores
+  var candidateIdx: Int = 0
+
+  def skipTo7() {
+    while (candidate.score != 7) {
+      if (candidate.next == null) addNewRecipes
+      candidate = candidate.next
+      candidateIdx = candidateIdx + 1
+    }
     addNewRecipes
-
-    i = i + 1
-    if (i%10000 == 0) println(i)
+    addNewRecipes
+    addNewRecipes
+    addNewRecipes
+    addNewRecipes
+    addNewRecipes
   }
 
-
-
-  var node = recipeScores
-  i = 0
-  while (i < input) {
-//    print(node.score + " ")
-    node = node.next
-    i = i + 1
+  skipTo7()
+  while (s"${candidate.score}${candidate.next.score}${candidate.next.next.score}${candidate.next.next.next.score}${candidate.next.next.next.next.score}${candidate.next.next.next.next.next.score}" != s"$input") {
+//    println(candidateIdx + " -> " + s"${candidate.score}${candidate.next.score}${candidate.next.next.score}${candidate.next.next.next.score}${candidate.next.next.next.next.score}${candidate.next.next.next.next.next.score}")
+    if (candidate.next == null) addNewRecipes
+    candidate = candidate.next
+    candidateIdx = candidateIdx + 1
+    skipTo7()
   }
-  while (node != null) {
-    print(node.score + " ")
-    node = node.next
-  }
-//  println(recipeScores)
-//  println(recipeScores)
-
+  println(candidateIdx)
 
 }
