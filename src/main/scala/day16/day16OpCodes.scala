@@ -43,7 +43,10 @@ object day16OpCodes {
     override def exec(rs: Map[Int, Int]): Map[Int, Int] = rs + (c -> (if (rs(a)>b) 1 else 0))
   }
   case class Gtrr(a: Int, b: Int, c: Int) extends OpCode {
-    override def exec(rs: Map[Int, Int]): Map[Int, Int] = rs + (c -> (if (rs(a)>rs(b)) 1 else 0))
+    override def exec(rs: Map[Int, Int]): Map[Int, Int] = rs + (c -> (if (rs(a)>rs(b))
+      1
+    else
+      0))
   }
   case class Eqir(a: Int, b: Int, c: Int) extends OpCode {
     override def exec(rs: Map[Int, Int]): Map[Int, Int] = rs + (c -> (if (a==rs(b)) 1 else 0))
