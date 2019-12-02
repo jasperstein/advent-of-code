@@ -1,0 +1,10 @@
+[package]
+name = "aoc-2019"
+version = "2019.12.1"
+authors = ["jasper.stein@gmail.com"]
+
+[[bin]]
+name = "day1"
+path = "src/day1/Day1.rs"
+
+[dependencies]
