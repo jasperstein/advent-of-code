@@ -1,0 +1,6 @@
+.idea/
+.vscode/
+.metals
+out/
+scala/scala.iml
+idris/*.ibc
